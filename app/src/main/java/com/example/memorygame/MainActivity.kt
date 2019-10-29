@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         val colors = List(pairs.size) { createRandomColor() }
 
+        //TODO: use values from string.xml
         val textOnCards = List(pairs.size) { i -> "Pair ${i + 1}" }
 
         return List(pairs.size) {i -> Triple(pairs[i], colors[i], textOnCards[i]) }
