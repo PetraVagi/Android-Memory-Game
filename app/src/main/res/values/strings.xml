@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">My Memory Game</string>
+    <string name="pair_1">Pair 1</string>
+    <string name="pair_2">Pair 2</string>
+    <string name="pair_3">Pair 3</string>
+    <string name="pair_4">Pair 4</string>
+    <string name="pair_5">Pair 5</string>
+    <string name="pair_6">Pair 6</string>
+</resources>
