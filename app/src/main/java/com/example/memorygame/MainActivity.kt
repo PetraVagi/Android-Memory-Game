@@ -24,19 +24,17 @@ class MainActivity : AppCompatActivity() {
         val cards= getCardsWithStyle()
 
         for (cardPair in cards) {
-
-            cardPair.first.first.setOnClickListener {
-                makeStyle(it as TextView, cardPair.second, cardPair.third, Handler()) }
-             cardPair.first.second.setOnClickListener {
-                    makeStyle(it as TextView, cardPair.second, cardPair.third, Handler()) }
+            cardPair.toList().forEach { card ->
+                card.view.setOnClickListener { makeStyle(card, Handler()) }
+            }
         }
     }
 
-    private fun makeStyle( view: TextView, color: Int, text: String, handler: Handler ) {
-        clickedPair.add(view)
+    private fun makeStyle(card: Card, handler: Handler) {
+        clickedPair.add(card.view)
 
-        view.setBackgroundColor(color)
-        view.text = text
+        card.view.setBackgroundColor(card.color)
+        card.view.text = card.text
 
         if (clickedPair.size == 2)
             handler.postDelayed({ checkIfPair() }, 1200)
@@ -55,12 +53,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**This function returns a List of Triples which contains the following elements:
-     *      - first (Pair of TextViews): that will be pairs in the game too
-     *      - second (Int): a randomly calculated number to set same the background color for the pairs
-     *      - third (String): text to be displayed on the TextViews
-     * */
-    private fun getCardsWithStyle(): List<Triple<Pair<TextView, TextView>, Int, String>> {
+    private fun getCardsWithStyle(): List<Pair<Card, Card>> {
 
         val pairs = createListOfPairs()
 
@@ -68,12 +61,14 @@ class MainActivity : AppCompatActivity() {
 
         val textOnCards = List(pairs.size) { i -> "Pair ${i + 1}" }
 
-        return List(pairs.size) {i -> Triple(pairs[i], colors[i], textOnCards[i]) }
+        return List(pairs.size) {i ->
+            Card(pairs[i].first, colors[i], textOnCards[i]) to
+            Card(pairs[i].second, colors[i], textOnCards[i])}
 
     }
 
     private fun createListOfPairs(): List<Pair<TextView, TextView>> {
-        val shuffledCards = getCards().shuffled()
+        val shuffledCards = getClickableTextViews().shuffled()
 
         val sizeOfList = shuffledCards.size / 2
 
@@ -85,7 +80,7 @@ class MainActivity : AppCompatActivity() {
             Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
     }
 
-    private fun getCards(): List<TextView> {
+    private fun getClickableTextViews(): List<TextView> {
         val parent: ViewGroup = background
 
         val clickableViews = mutableListOf<TextView>()
