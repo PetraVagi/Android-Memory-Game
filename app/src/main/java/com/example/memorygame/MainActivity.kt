@@ -2,6 +2,7 @@ package com.example.memorygame
 
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -23,32 +24,48 @@ class MainActivity : AppCompatActivity() {
         val cards= getCardsWithStyle()
 
         for (card in cards) {
-            card.first.first.setOnClickListener { makeStyle(it as TextView, card.second, card.third) }
-            card.first.second.setOnClickListener { makeStyle(it as TextView, card.second, card.third) }
+
+
+            card.first.first.setOnClickListener { makeStyle(it as TextView, card.second, card.third, Handler()) }
+            card.first.second.setOnClickListener { makeStyle(
+                it as TextView,
+                card.second,
+                card.third,
+                Handler()
+            ) }
+//            card.first.first.setOnClickListener { Handler().postDelayed({checkIfPair()}, 2000) }
+//            card.first.second.setOnClickListener { Handler().postDelayed({checkIfPair()}, 2000) }
         }
     }
 
-    private fun makeStyle(view: TextView, color: Int, text: String) {
+    private fun makeStyle(
+        view: TextView,
+        color: Int,
+        text: String,
+        handler: Handler
+    ) {
         clickedPair.add(view)
 
         view.setBackgroundColor(color)
         view.text = text
 
-        if (clickedPair.size == 2)
-            checkIfPair()
+        handler.postDelayed({checkIfPair()}, 2000)
     }
 
-    private val changeBackToWhite =
-        { clickedPair.forEach { view -> view.setBackgroundResource(android.R.color.white) } }
+//    private val changeBackToWhite =
+//        { clickedPair.forEach { view -> view.setBackgroundResource(android.R.color.white) } }
 
-//    private fun changeBackToWhite() {
-//        clickedPair.forEach { view -> view.setBackgroundResource(android.R.color.white) }
-//    }
+    private fun changeBackToWhite() {
+        clickedPair.forEach { view -> view.setBackgroundResource(android.R.color.white) }
+    }
 
     private fun checkIfPair() {
-        if (clickedPair[0].text != clickedPair[1].text)
-            changeBackToWhite()
-        clickedPair.clear()
+        if (clickedPair.size == 2) {
+
+            if (clickedPair[0].text != clickedPair[1].text)
+                changeBackToWhite()
+            clickedPair.clear()
+        }
     }
 
     private fun getCardsWithStyle(): List<Triple<Pair<TextView, TextView>, Int, String>> {
