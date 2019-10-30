@@ -12,69 +12,60 @@ import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
+    private var clickedPair = mutableListOf<TextView>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setListeners()
     }
 
-    private var clickedPair = mutableListOf<TextView>()
-
     private fun setListeners() {
         val cards= getCardsWithStyle()
 
-        for (card in cards) {
+        for (cardPair in cards) {
 
-
-            card.first.first.setOnClickListener { makeStyle(it as TextView, card.second, card.third, Handler()) }
-            card.first.second.setOnClickListener { makeStyle(
-                it as TextView,
-                card.second,
-                card.third,
-                Handler()
-            ) }
-//            card.first.first.setOnClickListener { Handler().postDelayed({checkIfPair()}, 2000) }
-//            card.first.second.setOnClickListener { Handler().postDelayed({checkIfPair()}, 2000) }
+            cardPair.first.first.setOnClickListener {
+                makeStyle(it as TextView, cardPair.second, cardPair.third, Handler()) }
+             cardPair.first.second.setOnClickListener {
+                    makeStyle(it as TextView, cardPair.second, cardPair.third, Handler()) }
         }
     }
 
-    private fun makeStyle(
-        view: TextView,
-        color: Int,
-        text: String,
-        handler: Handler
-    ) {
+    private fun makeStyle( view: TextView, color: Int, text: String, handler: Handler ) {
         clickedPair.add(view)
 
         view.setBackgroundColor(color)
         view.text = text
 
-        handler.postDelayed({checkIfPair()}, 2000)
-    }
-
-//    private val changeBackToWhite =
-//        { clickedPair.forEach { view -> view.setBackgroundResource(android.R.color.white) } }
-
-    private fun changeBackToWhite() {
-        clickedPair.forEach { view -> view.setBackgroundResource(android.R.color.white) }
+        if (clickedPair.size == 2)
+            handler.postDelayed({ checkIfPair() }, 1200)
     }
 
     private fun checkIfPair() {
-        if (clickedPair.size == 2) {
+        if (clickedPair[0].text != clickedPair[1].text)
+            changeBackToWhite()
+        clickedPair.clear()
+    }
 
-            if (clickedPair[0].text != clickedPair[1].text)
-                changeBackToWhite()
-            clickedPair.clear()
+    private fun changeBackToWhite() {
+        clickedPair.forEach { view ->
+            view.setBackgroundResource(android.R.color.white)
+            view.text = ""
         }
     }
 
+    /**This function returns a List of Triples which contains the following elements:
+     *      - first (Pair of TextViews): that will be pairs in the game too
+     *      - second (Int): a randomly calculated number to set same the background color for the pairs
+     *      - third (String): text to be displayed on the TextViews
+     * */
     private fun getCardsWithStyle(): List<Triple<Pair<TextView, TextView>, Int, String>> {
 
         val pairs = createListOfPairs()
 
         val colors = List(pairs.size) { createRandomColor() }
 
-        //TODO: use values from string.xml
         val textOnCards = List(pairs.size) { i -> "Pair ${i + 1}" }
 
         return List(pairs.size) {i -> Triple(pairs[i], colors[i], textOnCards[i]) }
@@ -106,4 +97,6 @@ class MainActivity : AppCompatActivity() {
         return clickableViews
     }
 }
+
+class Card(var view: TextView, var color: Int, var text: String)
 
