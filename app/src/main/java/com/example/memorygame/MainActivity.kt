@@ -1,10 +1,10 @@
 package com.example.memorygame
 
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.random.Random
 
@@ -17,6 +17,8 @@ class MainActivity : AppCompatActivity() {
         setListeners()
     }
 
+    private var clickedPair = mutableListOf<TextView>()
+
     private fun setListeners() {
         val cards= getCardsWithStyle()
 
@@ -27,8 +29,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun makeStyle(view: TextView, color: Int, text: String) {
+        clickedPair.add(view)
+
         view.setBackgroundColor(color)
         view.text = text
+
+        if (clickedPair.size == 2)
+            checkIfPair()
+    }
+
+    private val changeBackToWhite =
+        { clickedPair.forEach { view -> view.setBackgroundResource(android.R.color.white) } }
+
+//    private fun changeBackToWhite() {
+//        clickedPair.forEach { view -> view.setBackgroundResource(android.R.color.white) }
+//    }
+
+    private fun checkIfPair() {
+        if (clickedPair[0].text != clickedPair[1].text)
+            changeBackToWhite()
+        clickedPair.clear()
     }
 
     private fun getCardsWithStyle(): List<Triple<Pair<TextView, TextView>, Int, String>> {
